@@ -6,41 +6,41 @@ class SN30_8BitDO():
     def __init__(self) -> None:
         pygame.init()
 
-        
-        
-        self.axis = np.zeros(6)
-        self.button = np.zeros(11)
-        self.hat = np.zeros(1)
-    def update(self):
-        self.joystick = pygame.joystick.Joystick(0)
         joystick_count = pygame.joystick.get_count()
-        #print(joystick_count)
-        #print()
+        if joystick_count == 0:
+            return
+        self.joystick = pygame.joystick.Joystick(0)
         self.joystick.init()
-        """for event in pygame.event.get():
-            if event.type == pygame.JOYAXISMOTION:
-                self.axis[event.axis] = event.value
-            elif event.type == pygame.JOYBUTTONDOWN:
-                self.button[event.button] = 1
-            elif event.type == pygame.JOYBUTTONUP:
-                self.button[event.button] = 0
-            elif event.type == pygame.JOYHATMOTION:
-                self.hat[event.hat] = event.value"""
-        axis0 = self.joystick.get_axis(0)
-        axis1 = self.joystick.get_axis(1)
-        axes = self.joystick.get_numaxes()
-        print("\r", axes,axis0, axis1, end='')
+        pygame.event.get()
+
+        self.name = self.joystick.get_name()
+        self.num_buttons = self.joystick.get_numbuttons()
+        self.num_axes = self.joystick.get_numaxes()
+        self.num_hats = self.joystick.get_numhats()
+        self.axis = np.zeros(self.num_axes)
+        self.button = np.zeros(self.num_buttons)
+        self.hat = np.zeros((self.num_hats, 2))
+    
+    def update(self):
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pgl.KEYDOWN and event.key == pgl.K_q:
+                return
+        for i in range(self.num_axes):
+            self.axis[i] = self.joystick.get_axis(i)
+        for i in range(self.num_buttons):
+            self.button[i] = self.joystick.get_button(i)
+        for i in range(self.num_hats):
+            self.hat[i] = self.joystick.get_hat(i)
+        return events
+    
+    def get_axis(self, idx):
+        return self.axis[idx]
+    
+    def get_button(self, idx):
+        return self.button[idx]
+    
+    def get_hat(self, idx):
+        return self.hat[idx]    
 
 
-if __name__ == "__main__":
-    sn30 = SN30_8BitDO()
-    clock = pygame.time.Clock()
-    while True:
-        for event in pygame.event.get(): # User did something.
-            if event.type == pygame.QUIT: # If user clicked close.
-                done = True # Flag that we are done so we exit this loop.
-
-        if event.type == pgl.KEYDOWN and event.key == pgl.K_q:
-            done = True
-        sn30.update()
-        clock.tick(30)
