@@ -11,9 +11,9 @@ DIRECTION_MAP = {2:'UP', 1:'UP-RIGHT', 0:'RIGHT', -1:'DOWN-RIGHT', -2:'DOWN', -3
 
 if __name__ == "__main__":
 			 
-			ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+	ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
     ser.reset_input_buffer()
-			sn30 = SN30_8BitDO()
+	sn30 = SN30_8BitDO()
     clock = pygame.time.Clock()
 
     while True:
