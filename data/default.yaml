@@ -1,0 +1,4 @@
+Serial:
+  device_class: /dev/ttyACM0
+  port: 9600
+  

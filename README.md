@@ -29,4 +29,7 @@ We simply use USB cable to serial communication between Pi and Arduino.
 Run testing code on raspberry side
  
 
-## Demo for Mecanum robot controll and 
+## Demo for Mecanum robot controll
+```
+python demo.py
+```
