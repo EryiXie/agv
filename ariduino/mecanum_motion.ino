@@ -1,15 +1,16 @@
 #include "MeOrion.h"
 // #include <Arduino.h>
 #include "SoftwareSerial.h"
-#include <HardwareSerial.h>
+//#include <HardwareSerial.h>
 #include <Wire.h>
 
+MeSerial se;
 MeEncoderMotor motor1(0x09, SLOT1);
 MeEncoderMotor motor2(0x09, SLOT2);
 MeEncoderMotor motor3(0x08, SLOT1);
 MeEncoderMotor motor4(0x08, SLOT2);
 
-int moveSpeed = 25;
+int moveSpeed = 50;
 unsigned char stop_flag = 0;
 
 void setup() {
@@ -21,121 +22,126 @@ void setup() {
 }
 
 void loop() {
-  Stop_run();
   control();
 }
 
 void control() {
-  if (Seiral.available() <= 0) {
+  float speed = Serial.readStringUntil(' ').toFloat();
+  String direction = Serial.readStringUntil('\n');
+  parseJoystick(speed, direction);
+  delay(50);
+  Serial.println(String(speed)+' '+direction+'\n');
+  /*if (Serial.available() <= 0) {
     Serial.print("no device found!\n");
     delay(100);
   } else {
-    String speed = Serial.readStringUntil(' ').toFloat();
+    float speed = Serial.readStringUntil(' ').toFloat();
     String direction = Serial.readStringUntil('\n');
     //int len = usbhost.host_recv(); // Read data length
+    Serial.print(speed);
+    Serial.print(direction);
     parseJoystick(speed, direction);
     delay(5);
-  }
+  }*/
 }
 
 void parseJoystick(float speed, String direction) {
 
   float currentSpeed = int(moveSpeed*speed);
-
-  if (direction=='UP')
+  if (direction=="UP")
   {
     Forward_run(currentSpeed);
   }
-  else if (direction=='DOWN')
+  else if (direction=="DOWN")
   {
     Backward_run(currentSpeed);
   }
-  else if (direction=='RIGHT')
+  else if (direction=="RIGHT")
   {
     Right_run(currentSpeed);
   }
-  else if (direction=='LEFT')
+  else if (direction=="LEFT")
   {
     Left_run(currentSpeed);
   }
-  else if (direction=='RIGHTUP')
+  else if (direction=="RIGHTUP")
   {
     RightUp_run(currentSpeed);
   }
-  else if (direction=='RIGHTDOWN')
+  else if (direction=="RIGHTDOWN")
   {
     RightDown_run(currentSpeed);
   }
-  else if (direction=='LEFTUP')
+  else if (direction=="LEFTUP")
   {
     LeftUp_run(currentSpeed);
   }
-  else if (direction=='LEFTDOWN')
+  else if (direction=="LEFTDOWN")
   {
     LeftDown_run(currentSpeed);
   }
-  else if (direction=='STOP')
+  else if (direction=="STOP")
   {
-    Stop_run(currentSpeed);
+    Stop_run();
   }
 }
 
 // ALL MOVES
-void Forward_run() {
+void Forward_run(float moveSpeed) {
   motor1.runSpeed(-moveSpeed);
   motor2.runSpeed(moveSpeed);
   motor3.runSpeed(-moveSpeed);
   motor4.runSpeed(moveSpeed);
 }
-void Backward_run() {
+void Backward_run(float moveSpeed) {
   motor1.runSpeed(moveSpeed);
   motor2.runSpeed(-moveSpeed);
   motor3.runSpeed(moveSpeed);
   motor4.runSpeed(-moveSpeed);
 }
-void Right_run() {
+void Right_run(float moveSpeed) {
   motor1.runSpeed(-moveSpeed);
   motor2.runSpeed(-moveSpeed);
   motor3.runSpeed(moveSpeed);
   motor4.runSpeed(moveSpeed);
 }
-void Left_run() {
+void Left_run(float moveSpeed) {
   motor1.runSpeed(moveSpeed);
   motor2.runSpeed(moveSpeed);
   motor3.runSpeed(-moveSpeed);
   motor4.runSpeed(-moveSpeed);
 }
-void RightDown_run() {
+void RightDown_run(float moveSpeed) {
   motor1.runSpeed(0);
   motor2.runSpeed(-moveSpeed);
   motor3.runSpeed(moveSpeed);
   motor4.runSpeed(0);
 }
-void RightUp_run() {
+void RightUp_run(float moveSpeed) {
   motor1.runSpeed(-moveSpeed);
   motor2.runSpeed(0);
   motor3.runSpeed(0);
   motor4.runSpeed(moveSpeed);
 }
-void LeftDown_run() {
+void LeftDown_run(float moveSpeed) {
   motor1.runSpeed(moveSpeed);
   motor2.runSpeed(0);
   motor3.runSpeed(0);
   motor4.runSpeed(-moveSpeed);
 }
-void LeftUp_run() {
+void LeftUp_run(float moveSpeed) {
   motor1.runSpeed(0);
   motor2.runSpeed(moveSpeed);
   motor3.runSpeed(-moveSpeed);
   motor4.runSpeed(0);
 }
-void TurnRight_run() {
+void TurnRight_run(float moveSpeed) {
   motor1.runSpeed(-moveSpeed);
   motor2.runSpeed(-moveSpeed);
   motor3.runSpeed(-moveSpeed);
   motor4.runSpeed(-moveSpeed);
 }
-void TurnLeft_run() {
+void TurnLeft_run(float moveSpeed) {
   motor1.runSpeed(moveSpeed);
   motor2.runSpeed(moveSpeed);
   motor3.runSpeed(moveSpeed);
